@@ -9,7 +9,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   setCookie("Auth", token, { req, res });
   setCookie("User", id, { req, res });
 
-  // console.log(token, id);
+  console.log(token, id);
 
   axios.defaults.headers.common["Authorization"] = token;
   res.writeHead(308, { Location: `/steam/${id}`, Token: token }).end();
