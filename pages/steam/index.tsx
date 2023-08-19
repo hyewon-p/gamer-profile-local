@@ -3,23 +3,24 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import Layout from "../../components/Layout";
 import axios from "axios";
-import { getCookie } from "cookies-next";
+import { getCookie, setCookie } from "cookies-next";
 import Library from "../../components/Library";
 import Trait from "../../components/Trait";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { userID } from "../../store/user.store";
+import router from "../../lib/router";
+import { useRouter } from "next/router";
 
 axios.defaults.withCredentials = true;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const res = await fetch(process.env.BASE_URL + "/api/hello");
-  // console.log(res);
+  await router.run(context.req, context.res);
+  setCookie("User", context.req.user._json.steamid);
   return {
-    props: {},
-    // redirect: {
-    //   destination: `/steam/login`,
-    //   permanent: false,
-    // },
+    redirect: {
+      destination: "/steam/profile",
+      permanent: false,
+    },
   };
 };
 const SteamPage = () => {

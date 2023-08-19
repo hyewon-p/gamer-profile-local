@@ -102,10 +102,9 @@ const ProfilePage: NextPage<steamData> = ({ appList, profile }) => {
   const router = useRouter();
   const [isOwner, setIsOwner] = useRecoilState(isOwnerValue);
 
-  const { id } = router.query;
   const userID = getCookie("User");
   useEffect(() => {
-    setIsOwner(id == userID);
+    setIsOwner(true);
     // setDesc(profile.description);
   }, []);
 
