@@ -13,8 +13,21 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "incremental": true
+    "incremental": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./"],
+      "@components/*": ["./components/*"],
+      "@styles/*": ["./styles/*"],
+      "@database/*": ["./database/*"]
+    }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "server/server.js"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "server/server.js",
+    "server/initDB.js"
+  ],
   "exclude": ["node_modules"]
 }
