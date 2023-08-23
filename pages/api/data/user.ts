@@ -13,11 +13,13 @@ export default async function handler(
   if (req.method == "PUT") {
     const profile = JSON.parse(req.body);
     await db.run(
-      `insert into users (steamKey, username, image) values ("${profile.steamKey}", "${profile.username}", "${profile.image}")
-      `
+      `insert or replace into users (steamKey, username, image) 
+      values ("${profile.steamKey}", "${profile.username}", "${profile.image}")
+        `
     );
+
     await db.close();
-    res.status(201).json(`welcome ${profile.username}`);
+    res.redirect(307, "/steam/profile");
   } else if (req.method == "GET") {
     const key = req.query.key;
     const userData = await db.get(

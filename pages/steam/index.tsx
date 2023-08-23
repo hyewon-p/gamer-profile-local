@@ -25,13 +25,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     method: "PUT",
     body: JSON.stringify(body),
   });
-  // await fetch("api/db/setup");
   return {
-    // props: {},
-    redirect: {
-      destination: "/steam/profile",
-      permanent: false,
-    },
+    props: {},
   };
 };
 const SteamPage = () => {
