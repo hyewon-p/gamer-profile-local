@@ -46,6 +46,7 @@ const Library: React.FC<{ appList: gameInfo[] }> = ({ appList }) => {
 
   return (
     <div className="w-[30%]">
+      {/* {console.log(appList)} */}
       <div className="flex items-center mb-2 mt-1">
         <div className="font-medium text-lg">보유 게임</div>
         <div className="grow"></div>

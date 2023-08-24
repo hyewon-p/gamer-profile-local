@@ -17,7 +17,6 @@ export default async function handler(
       values ("${profile.steamKey}", "${profile.username}", "${profile.image}")
         `
     );
-
     await db.close();
     res.redirect(307, "/steam/profile");
   } else if (req.method == "GET") {

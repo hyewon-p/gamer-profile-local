@@ -25,13 +25,30 @@ const ProfilePage: NextPage = () => {
   const [isOwner, setIsOwner] = useRecoilState(isOwnerValue);
   const [profile, setProfile] = useState();
   const [desc, setDesc] = useState("");
+  const [appList, setAppList] = useState([]);
 
   const userID = getCookie("User");
   useEffect(() => {
     setIsOwner(true);
     getData();
+
     // setDesc(profile.description);
   }, []);
+
+  useEffect(() => {
+    if (profile) {
+      getAppList();
+    }
+  }, [profile]);
+
+  const getAppList = async () => {
+    const data = await fetch("/api/data/game", {
+      method: "POST",
+      body: JSON.stringify({ url: "getAllFromLibrary", userID: profile.id }),
+    }).then((d) => d.json());
+    setAppList(JSON.parse(data));
+    console.log(appList);
+  };
 
   const getData = async () => {
     const key = getCookie("User");
@@ -180,13 +197,13 @@ const ProfilePage: NextPage = () => {
               </div>
             </div>
 
-            {/* <div className="flex gap-4">
+            <div className="flex gap-4">
               <div className="grow">
-                <Trait />
-                <Favorite library={appList} />
+                {/* <Trait /> */}
+                {/* <Favorite library={appList} /> */}
               </div>
               <Library appList={appList} />
-            </div> */}
+            </div>
           </>
         ) : (
           <>

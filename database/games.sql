@@ -7,5 +7,6 @@ CREATE TABLE IF NOT EXISTS games (
         image TEXT,
         platform TEXT,
         playtime INTEGER,
-        favorite TEXT
+        favorite TEXT,
+        foreign key(userID) references users(userID)
       )
