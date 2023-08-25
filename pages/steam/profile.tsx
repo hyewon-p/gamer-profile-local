@@ -27,7 +27,6 @@ const ProfilePage: NextPage = () => {
   const [desc, setDesc] = useState("");
   const [appList, setAppList] = useState([]);
 
-  const userID = getCookie("User");
   useEffect(() => {
     setIsOwner(true);
     getData();
@@ -44,14 +43,17 @@ const ProfilePage: NextPage = () => {
   const getAppList = async () => {
     const data = await fetch("/api/data/game", {
       method: "POST",
-      body: JSON.stringify({ url: "getAllFromLibrary", userID: profile.id }),
+      body: JSON.stringify({
+        url: "getAllFromLibrary",
+        bodyData: { userID: profile.id },
+      }),
     }).then((d) => d.json());
     setAppList(JSON.parse(data));
     console.log(appList);
   };
 
   const getData = async () => {
-    const key = getCookie("User");
+    const key = getCookie("Key");
     const user = await fetch(`/api/data/user?key=${key}`).then((d) => d.json());
     console.log(user);
     setProfile(user);

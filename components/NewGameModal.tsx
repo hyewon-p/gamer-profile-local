@@ -25,29 +25,33 @@ const NewGameModal = ({ showModal, setShowModal }) => {
   const router = useRouter();
 
   const getPlatformData = async () => {
-    const user = await axios.post(`${process.env.API_URL}/user/id/${userid}`);
+    // const user = await axios.post(`/api/data/steam/getOwnedGames?`);
 
     setPlatforms([
       "직접 입력",
-      user.data.steamKey && "STEAM",
-      user.data.psToken && "PS",
+      "STEAM",
+      // user.data.psToken && "PS",
     ]);
   };
 
   const getAppData = async (e: any) => {
     setPlatform(e.target.value);
-    const token = getCookie("Auth");
-    axios.defaults.headers.common["Authorization"] = token;
     if (e.target.value == "STEAM") {
-      const fetchedData = await axios.post(`/API/steam/profile/${userid}`);
-      const resData: appData[] = fetchedData.data.appList;
+      const steamKey = getCookie("Key");
+      const fetchedData = await fetch("/api/data/steam", {
+        method: "POST",
+        body: JSON.stringify({
+          url: "getOwnedGames",
+          bodyData: { steamKey: steamKey },
+        }),
+      }).then((d) => d.json());
       setGames(
-        resData.sort((a, b) =>
+        JSON.parse(fetchedData).sort((a, b) =>
           a.name > b.name ? 1 : a.name === b.name ? 0 : -1
         )
       );
     } else if (e.target.value == "PS") {
-      const fetchedData = await axios.get(`/API/user/ps/games`);
+      const fetchedData = await axios.get(`/api/user/ps/games`);
       console.log(fetchedData.data.data.gameLibraryTitlesRetrieve.games);
       const resData = fetchedData.data.data.gameLibraryTitlesRetrieve.games;
       setGames(
@@ -80,22 +84,27 @@ const NewGameModal = ({ showModal, setShowModal }) => {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-
-    const token = getCookie("Auth");
-    axios.defaults.headers.common["Authorization"] = token;
     let gameID;
     if (platform == "직접 입력") {
       gameID = await setAppID();
     }
-
-    const fetch = await axios.post(`/API/game/new`, {
-      gameID: game.appID ? game.appID : gameID,
-      title: game.name,
-      platform: platform,
-      playtime: Number(game.playTime),
-      image: game.iconURL,
+    const data = await fetch(`/api/data/game`, {
+      method: "PUT",
+      body: JSON.stringify({
+        url: "new",
+        bodyData: {
+          gameInfo: {
+            gameID: game.appID ? game.appID : gameID,
+            userID: userid,
+            title: game.name,
+            platform: platform,
+            playtime: Number(game.playTime),
+            image: game.iconURL,
+          },
+        },
+      }),
     });
-    if (fetch.status == 201) {
+    if (data.status == 200) {
       setShowModal(false);
     }
     router.replace(router.asPath);

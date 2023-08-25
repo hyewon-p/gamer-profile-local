@@ -1,16 +1,23 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import axios from "axios";
 import { setCookie } from "cookies-next";
+import router from "lib/router";
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-
-  const { token, id } = req.query;
-  setCookie("Auth", token, { req, res });
-  setCookie("User", id, { req, res });
-
-  console.log(token, id);
-
-  axios.defaults.headers.common["Authorization"] = token;
-  res.writeHead(308, { Location: `/steam/${id}`, Token: token }).end();
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  await router.run(req, res);
+  const body = {
+    steamKey: req.user._json.steamid,
+    username: req.user._json.personaname,
+    image: req.user._json.avatarfull,
+  };
+  const user = await fetch(`${process.env.BASE_URL}/api/data/user`, {
+    method: "PUT",
+    body: JSON.stringify(body),
+  }).then((d) => d.json());
+  setCookie("Key", req.user._json.steamid, { req, res });
+  setCookie("User", JSON.parse(user), { req, res });
+  res.writeHead(308, { Location: `/steam/profile` }).end();
 }
