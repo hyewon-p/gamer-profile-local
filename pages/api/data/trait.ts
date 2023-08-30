@@ -10,7 +10,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     data = await getAll(bodyData.userID);
   }
   if (url == "new") {
-    data = await createNewTrait(bodyData);
+    await deleteTrait(bodyData.removed);
+    await updateTrait(bodyData.traits);
   }
 
   res.status(200).send(data);
@@ -34,7 +35,7 @@ interface trait {
   seq: number;
 }
 
-const createNewTrait = async (traits: trait[]) => {
+const updateTrait = async (traits: trait[]) => {
   // console.log(gameInfo);
   const db = await open({
     filename: "./database/db.sqlite",
@@ -53,7 +54,21 @@ const createNewTrait = async (traits: trait[]) => {
       );
     })
   );
-
   await db.close();
   return 201;
+};
+
+const deleteTrait = async (removed: trait[]) => {
+  const db = await open({
+    filename: "./database/db.sqlite",
+    driver: sqlite3.Database,
+  });
+  await Promise.all(
+    removed.map((trait) => {
+      db.run(
+        `delete from traits where userID=${trait.userID} and seq=${trait.seq}`
+      );
+    })
+  );
+  await db.close();
 };

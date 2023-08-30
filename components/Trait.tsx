@@ -15,7 +15,10 @@ const Trait = () => {
   const userID = getCookie("User");
 
   const makeNew = () => {
-    setEmptyList((prev) => [...prev, {}]);
+    setEmptyList((prev) => [
+      ...prev,
+      { userID: userID, seq: data.length + emptyList.length },
+    ]);
   };
 
   const getData = async () => {
@@ -34,10 +37,10 @@ const Trait = () => {
     e.preventDefault();
     const fetch = await axios.put("/api/data/trait", {
       url: "new",
-      bodyData: [{ userID: userID, label: "디스코드", value: "#0000", seq: 0 }],
-      // c_trait: emptyList,
-      // u_trait: data,
-      // d_trait: trash,
+      bodyData: {
+        traits: [...data, ...emptyList],
+        removed: trash,
+      },
     });
     if (fetch.status == 200) {
       toast("저장되었습니다.");
@@ -80,7 +83,7 @@ const Trait = () => {
                           setData((prev) =>
                             prev.filter((g, index) => index != i)
                           );
-                          setTrash((prev) => [...prev, t.id]);
+                          setTrash((prev) => [...prev, t]);
                         }}
                         className="group w-4 h-4 p-[0.1rem]"
                       >
