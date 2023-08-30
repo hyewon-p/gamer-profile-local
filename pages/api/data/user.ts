@@ -12,7 +12,7 @@ export default async function handler(
     driver: sqlite3.Database,
   });
   if (req.method == "PUT") {
-    const profile = JSON.parse(req.body);
+    const profile = req.body;
     await db.run(
       `insert or ignore into users (steamKey, username, image)
       values ("${profile.steamKey}", "${profile.username}", "${profile.image}")
@@ -22,7 +22,7 @@ export default async function handler(
       `select id from users where steamKey="${profile.steamKey}"`
     );
     await db.close();
-    res.status(200).json(JSON.stringify(user.id));
+    res.status(200).send(user.id);
   } else if (req.method == "GET") {
     const key = req.query.key;
     const userData = await db.get(
@@ -30,7 +30,7 @@ export default async function handler(
     );
     await db.close();
     userData
-      ? res.status(200).json(userData)
+      ? res.status(200).send(userData)
       : res.redirect(307, "/steam/login");
   }
 }

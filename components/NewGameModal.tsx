@@ -38,18 +38,18 @@ const NewGameModal = ({ showModal, setShowModal }) => {
     setPlatform(e.target.value);
     if (e.target.value == "STEAM") {
       const steamKey = getCookie("Key");
-      const fetchedData = await fetch("/api/data/steam", {
-        method: "POST",
-        body: JSON.stringify({
+      await axios
+        .post("/api/data/steam", {
           url: "getOwnedGames",
           bodyData: { steamKey: steamKey },
-        }),
-      }).then((d) => d.json());
-      setGames(
-        JSON.parse(fetchedData).sort((a, b) =>
-          a.name > b.name ? 1 : a.name === b.name ? 0 : -1
-        )
-      );
+        })
+        .then((res) =>
+          setGames(
+            res.data.sort((a, b) =>
+              a.name > b.name ? 1 : a.name === b.name ? 0 : -1
+            )
+          )
+        );
     } else if (e.target.value == "PS") {
       const fetchedData = await axios.get(`/api/user/ps/games`);
       console.log(fetchedData.data.data.gameLibraryTitlesRetrieve.games);
@@ -88,21 +88,18 @@ const NewGameModal = ({ showModal, setShowModal }) => {
     if (platform == "직접 입력") {
       gameID = await setAppID();
     }
-    const data = await fetch(`/api/data/game`, {
-      method: "PUT",
-      body: JSON.stringify({
-        url: "new",
-        bodyData: {
-          gameInfo: {
-            gameID: game.appID ? game.appID : gameID,
-            userID: userid,
-            title: game.name,
-            platform: platform,
-            playtime: Number(game.playTime),
-            image: game.iconURL,
-          },
+    const data = await axios.put(`/api/data/game`, {
+      url: "new",
+      bodyData: {
+        gameInfo: {
+          gameID: game.appID ? game.appID : gameID,
+          userID: userid,
+          title: game.name,
+          platform: platform,
+          playtime: Number(game.playTime),
+          image: game.iconURL,
         },
-      }),
+      },
     });
     if (data.status == 200) {
       setShowModal(false);

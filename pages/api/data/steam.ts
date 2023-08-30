@@ -4,13 +4,13 @@ import sqlite3 from "sqlite3";
 import SteamAPI from "steamapi";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { url, bodyData } = JSON.parse(req.body);
-  console.log(url, bodyData);
+  const { url, bodyData } = req.body;
+  //   console.log(url, bodyData);
   let data;
   if (url == "getOwnedGames") {
     data = await getOwnedGames(bodyData.steamKey);
   }
-  res.status(200).json(JSON.stringify(data));
+  res.status(200).send(data);
 };
 
 export default handler;

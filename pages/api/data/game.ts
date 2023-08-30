@@ -3,7 +3,8 @@ import { open } from "sqlite";
 import sqlite3 from "sqlite3";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { url, bodyData } = JSON.parse(req.body);
+  const { url, bodyData } = req.body;
+
   let data;
   if (url == "getAllFromLibrary") {
     data = await getAllFromLibrary(bodyData.userID);
@@ -12,7 +13,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     data = await createNewGame(bodyData.gameInfo);
   }
 
-  res.status(200).json(JSON.stringify(data));
+  res.status(200).send(data);
 };
 
 export default handler;
@@ -27,7 +28,7 @@ const getAllFromLibrary = async (userID: string) => {
 };
 
 const createNewGame = async (gameInfo) => {
-  console.log(gameInfo);
+  // console.log(gameInfo);
   const db = await open({
     filename: "./database/db.sqlite",
     driver: sqlite3.Database,

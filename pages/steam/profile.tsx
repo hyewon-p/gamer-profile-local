@@ -41,22 +41,19 @@ const ProfilePage: NextPage = () => {
   }, [profile]);
 
   const getAppList = async () => {
-    const data = await fetch("/api/data/game", {
-      method: "POST",
-      body: JSON.stringify({
+    await axios
+      .post("/api/data/game", {
         url: "getAllFromLibrary",
         bodyData: { userID: profile.id },
-      }),
-    }).then((d) => d.json());
-    setAppList(JSON.parse(data));
-    console.log(appList);
+      })
+      .then((res) => setAppList(res.data));
   };
 
   const getData = async () => {
     const key = getCookie("Key");
-    const user = await fetch(`/api/data/user?key=${key}`).then((d) => d.json());
-    console.log(user);
-    setProfile(user);
+    await axios
+      .get(`/api/data/user?key=${key}`)
+      .then((res) => setProfile(res.data));
   };
   const [showModal, setShowModal] = useState(false);
 
@@ -201,9 +198,10 @@ const ProfilePage: NextPage = () => {
 
             <div className="flex gap-4">
               <div className="grow">
-                {/* <Trait /> */}
+                <Trait />
                 {/* <Favorite library={appList} /> */}
               </div>
+              {/* {console.log(appList)} */}
               <Library appList={appList} />
             </div>
           </>

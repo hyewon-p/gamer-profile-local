@@ -8,22 +8,22 @@ import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 
 const Trait = () => {
-  const token = getCookie("Auth");
-  axios.defaults.headers.common["Authorization"] = token;
-  const router = useRouter();
-  const { id } = router.query;
   const [data, setData] = useState([]);
   const [trash, setTrash] = useState([]);
   const [emptyList, setEmptyList] = useState<any[]>([]);
   const isOwner = useRecoilValue(isOwnerValue);
+  const userID = getCookie("User");
 
   const makeNew = () => {
     setEmptyList((prev) => [...prev, {}]);
   };
 
   const getData = async () => {
-    const traits = await axios.post(`/API/trait/user/${id}`);
-    traits.status === 201 && setData(traits.data);
+    const traits = await axios.post(`/api/data/trait`, {
+      url: "getAll",
+      bodyData: { userID: userID },
+    });
+    setData(traits.data);
   };
   useEffect(() => {
     getData();
@@ -31,13 +31,13 @@ const Trait = () => {
   useEffect(() => {}, [data]);
 
   const saveTraits = async (e) => {
-    // e.preventDefault();
-    const token = getCookie("Auth");
-    axios.defaults.headers.common["Authorization"] = token;
-    const fetch = await axios.put("/API/trait/update", {
-      c_trait: emptyList,
-      u_trait: data,
-      d_trait: trash,
+    e.preventDefault();
+    const fetch = await axios.put("/api/data/trait", {
+      url: "new",
+      bodyData: [{ userID: userID, label: "디스코드", value: "#0000", seq: 0 }],
+      // c_trait: emptyList,
+      // u_trait: data,
+      // d_trait: trash,
     });
     if (fetch.status == 200) {
       toast("저장되었습니다.");
