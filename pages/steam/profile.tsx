@@ -199,7 +199,7 @@ const ProfilePage: NextPage = () => {
             <div className="flex gap-4">
               <div className="grow">
                 <Trait />
-                {/* <Favorite library={appList} /> */}
+                <Favorite library={appList} />
               </div>
               {/* {console.log(appList)} */}
               <Library appList={appList} />

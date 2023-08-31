@@ -2,18 +2,19 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
-import { isOwnerValue } from "../store/user.store";
+import { isOwnerValue, userID } from "../store/user.store";
 import { v4 } from "uuid";
 import { ToastContainer, toast } from "react-toastify";
+import { getCookie } from "cookies-next";
 
 const Favorite: React.FC<{ library: any }> = ({ library }) => {
   const [gameList, setGameList] = useState([]);
-  const router = useRouter();
-  const { id } = router.query;
   const isOwner = useRecoilValue(isOwnerValue);
+  const userID = getCookie("User");
   const getFavoriteGames = async () => {
-    const fetch = await axios.get(`/API/favorite/user/${id}`);
-    setGameList(fetch.data);
+    await axios
+      .post(`/api/data/favorite`, { bodyData: { userID: userID } })
+      .then((res) => setGameList(res.data));
     return;
   };
   useEffect(() => {
@@ -80,15 +81,20 @@ const NewComponent: React.FC<{
     playtime: 0,
   });
   const createFavorite = async () => {
-    const fetch = await axios.post("/api/favorite/new", {
-      gameID: gameInfo.id,
-      description: desc,
+    const fetch = await axios.post("/api/data/favorite", {
+      url: "new",
+      bodyData: {
+        gameID: gameInfo.id,
+        userID: userID,
+        description: desc,
+      },
     });
     fetch.status == 201 && toast("저장되었습니다.");
   };
   const [desc, setDesc] = useState("");
   return (
     <form className="w-full" onSubmit={createFavorite}>
+      {console.log(gameInfo)}
       <div className="relative w-full border-blue-400 border rounded py-3 px-5 min-h-[10rem] text-blue-400 flex flex-col ">
         <div className="flex items-center gap-1">
           <div className="bg-slate-400 w-5 h-5 rounded overflow-hidden">
@@ -104,12 +110,14 @@ const NewComponent: React.FC<{
             <select
               className="bg-blue-800/50 rounded px-1 ml-1"
               onChange={(e) => {
-                setGameInfo(library.filter((g) => g.id == e.target.value)[0]);
+                setGameInfo(
+                  library.filter((g) => g.gameID == e.target.value)[0]
+                );
               }}
             >
               {[{ title: "게임 선택", image: "", playtime: 0 }, ...library].map(
                 (game) => (
-                  <option key={`favorite${game.id}`} value={game.id}>
+                  <option key={`favorite${game.gameID}`} value={game.gameID}>
                     {/* {console.log(game)} */}
                     {game.title}
                   </option>
@@ -173,7 +181,7 @@ const FavoriteComponent = ({ gameInfo, setList, isOwner }) => {
   const [desc, setDesc] = useState(gameInfo.description);
   const { game } = gameInfo;
   const deleteGame = async () => {
-    const fetch = await axios.delete(`/API/favorite/delete/${game.id}`);
+    const fetch = await axios.delete(`/api/data/favorite/delete/${game.id}`);
     fetch.status == 200 &&
       setList((prev) => prev.filter((g) => g.game_id != game.id));
   };

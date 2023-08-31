@@ -1,5 +1,5 @@
 
--- drop table games;
+-- drop table games; 
 CREATE TABLE IF NOT EXISTS games (
         userID INTEGER,
         gameID TEXT,
@@ -7,7 +7,6 @@ CREATE TABLE IF NOT EXISTS games (
         image TEXT,
         platform TEXT,
         playtime INTEGER,
-        favorite TEXT,
         foreign key(userID) references users(userID)
         constraint games_pk PRIMARY key(userID, gameID)
       )
