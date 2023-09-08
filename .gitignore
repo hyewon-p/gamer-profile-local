@@ -154,3 +154,4 @@ amplifytools.xcconfig
 #amplify-do-not-edit-end
 
 db.sqlite
+/stories/
