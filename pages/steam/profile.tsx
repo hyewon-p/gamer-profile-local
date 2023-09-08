@@ -4,11 +4,11 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import Layout from "../../components/Layout";
 import axios from "axios";
 import { getCookie } from "cookies-next";
-import Library from "../../components/Library";
+import Library from "../../components/Library/Library";
 import Trait from "../../components/Trait";
 import { useRouter } from "next/router";
-import Favorite from "../../components/Favorite";
-import Modal from "../../components/Modal";
+import Favorite from "../../components/Favorite/Favorite";
+import Modal from "../../components/modals/Modal";
 import {
   RecoilState,
   useRecoilState,
@@ -16,14 +16,13 @@ import {
   useSetRecoilState,
 } from "recoil";
 import { isOwnerValue, tokenValue, userID } from "../../store/user.store";
-import Character from "../../components/Character";
-import Bookmark from "../../components/Bookmark";
 import { toast } from "react-toastify";
+import { userInterface } from "interfaces/user";
 
 const ProfilePage: NextPage = () => {
   const router = useRouter();
   const [isOwner, setIsOwner] = useRecoilState(isOwnerValue);
-  const [profile, setProfile] = useState();
+  const [profile, setProfile] = useState<userInterface>();
   const [desc, setDesc] = useState("");
   const [appList, setAppList] = useState([]);
 
@@ -44,7 +43,7 @@ const ProfilePage: NextPage = () => {
     await axios
       .post("/api/data/game", {
         url: "getAllFromLibrary",
-        bodyData: { userID: profile.id },
+        bodyData: { userID: profile!.id },
       })
       .then((res) => setAppList(res.data));
   };
@@ -150,8 +149,12 @@ const ProfilePage: NextPage = () => {
                               <form
                                 onSubmit={async (e) => {
                                   e.preventDefault();
+                                  const { npsso } =
+                                    e.target as typeof e.target & {
+                                      [nppso: string]: { value: string };
+                                    };
                                   await axios.patch("/API/user/ps/saveToken", {
-                                    npsso: e.target.npsso.value,
+                                    npsso: npsso.value,
                                   });
                                 }}
                               >

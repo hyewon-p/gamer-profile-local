@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Modal from "./Modal";
+import Modal from "./modals/Modal";
 import axios from "axios";
 import { getCookie } from "cookies-next";
 import Link from "next/link";

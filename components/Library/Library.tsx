@@ -1,21 +1,13 @@
-import React, { useState } from "react";
-import Modal from "./Modal";
+import React, { ReactEventHandler, useState } from "react";
+import Modal from "../modals/Modal";
 import NewGameModal from "./NewGameModal";
-import FormModal from "./FormModal";
+import FormModal from "../modals/FormModal";
 import { useRecoilValue } from "recoil";
-import { isOwnerValue } from "../store/user.store";
+import { isOwnerValue } from "../../store/user.store";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
-
-interface gameInfo {
-  id: number;
-  userID: number;
-  gameID: string;
-  title: string;
-  playtime: number;
-  image: string;
-}
+import { gameInfo } from "interfaces/game";
 
 const Library: React.FC<{ appList: gameInfo[] }> = ({ appList }) => {
   const [showModal, setShowModal] = useState(false);
@@ -29,31 +21,30 @@ const Library: React.FC<{ appList: gameInfo[] }> = ({ appList }) => {
   const deleteGame = async () => {
     if (selectedGame != undefined) {
       const fetch = await axios.delete(
-        `${process.env.API_URL}/game/delete/${selectedGame.gameID}`
+        `api/game/delete/${selectedGame.gameID}`
       );
       fetch.status == 200 && toast("삭제되었습니다.");
     }
-
     router.reload();
 
     setShowModifyModal(false);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: SubmitEvent) => {
     e.preventDefault();
-    await axios.patch(`${process.env.API_URL}/game`);
+    await axios.patch(`api/game`);
   };
 
   return (
-    <div className="w-[30%]">
+    <div className="text-white">
       {/* {console.log(appList)} */}
       <div className="flex items-center mb-2 mt-1">
-        <div className="font-medium text-lg">보유 게임</div>
+        <div className="font-medium text-lg shrink-0">보유 게임</div>
         <div className="grow"></div>
         {isOwner && (
           <button
             onClick={() => setShowModal(!showModal)}
-            className="px-2 py-1 border rounded border-blue-400 text-blue-400 text-sm hover:bg-blue-400/50 hover:text-blue-200"
+            className="px-2 py-1 shrink-0 border rounded border-blue-400 text-blue-400 text-sm hover:bg-blue-400/50 hover:text-blue-200"
           >
             추가
           </button>

@@ -1,3 +1,5 @@
+import { favoriteGameInterface } from "interfaces/favorite";
+import { gameInfo } from "interfaces/game";
 import { NextApiRequest, NextApiResponse } from "next";
 import { open } from "sqlite";
 import sqlite3 from "sqlite3";
@@ -23,11 +25,14 @@ const getAll = async (userID: string) => {
     filename: "./database/db.sqlite",
     driver: sqlite3.Database,
   });
-  const data = await db.all(`select * from favorites where userID=${userID}`);
-  return data;
+  const data = await db.all(
+    `select * from favorites left outer join games on favorites.gameID = games.gameID and favorites.userID=${userID}`
+  );
+
+  return formatData(data);
 };
 
-const createNewGame = async (gameInfo) => {
+const createNewGame = async (gameInfo: favoriteGameInterface) => {
   // console.log(gameInfo);
   const db = await open({
     filename: "./database/db.sqlite",
@@ -38,10 +43,36 @@ const createNewGame = async (gameInfo) => {
     values (
         ${gameInfo.userID},
         "${gameInfo.gameID}",
-        "${gameInfo.title}",
         "${gameInfo.description}",
-        ${gameInfo.seq}`
+        ${gameInfo.seq})`
   );
   await db.close();
   return 201;
+};
+
+const formatData = (response: Array<gameInfo & favoriteGameInterface>) => {
+  return response.map((data) => {
+    const {
+      userID,
+      gameID,
+      description,
+      seq,
+      title,
+      image,
+      platform,
+      playtime,
+    } = data;
+    return {
+      userID,
+      gameID,
+      description,
+      seq,
+      game: {
+        title,
+        image,
+        platform,
+        playtime,
+      },
+    };
+  });
 };

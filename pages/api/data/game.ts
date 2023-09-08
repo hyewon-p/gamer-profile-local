@@ -1,3 +1,4 @@
+import { gameInfo } from "interfaces/game";
 import { NextApiRequest, NextApiResponse } from "next";
 import { open } from "sqlite";
 import sqlite3 from "sqlite3";
@@ -12,7 +13,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (url == "new") {
     data = await createNewGame(bodyData.gameInfo);
   }
-
   res.status(200).send(data);
 };
 
@@ -27,7 +27,7 @@ const getAllFromLibrary = async (userID: string) => {
   return data;
 };
 
-const createNewGame = async (gameInfo) => {
+const createNewGame = async (gameInfo: gameInfo) => {
   // console.log(gameInfo);
   const db = await open({
     filename: "./database/db.sqlite",

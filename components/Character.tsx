@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import Modal from "./Modal";
-import FormModal from "./FormModal";
+import Modal from "./modals/Modal";
+import FormModal from "./modals/FormModal";
 import axios from "axios";
 import { getCookie } from "cookies-next";
 import { useRouter } from "next/router";

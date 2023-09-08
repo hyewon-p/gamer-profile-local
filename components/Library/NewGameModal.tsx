@@ -2,8 +2,8 @@ import axios from "axios";
 import { getCookie } from "cookies-next";
 import React, { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
-import { userID } from "../store/user.store";
-import FormModal from "./FormModal";
+import { userID } from "../../store/user.store";
+import FormModal from "../modals/FormModal";
 import { v4 } from "uuid";
 import { useRouter } from "next/router";
 

@@ -1,6 +1,6 @@
 import axios from "axios";
 import { getCookie } from "cookies-next";
-import React, { useEffect, useState } from "react";
+import React, { FormEvent, useEffect, useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 import { useRecoilValue } from "recoil";
 import { isOwnerValue } from "../store/user.store";
@@ -33,7 +33,7 @@ const Trait = () => {
   }, []);
   useEffect(() => {}, [data]);
 
-  const saveTraits = async (e) => {
+  const saveTraits = async (e: FormEvent) => {
     e.preventDefault();
     const fetch = await axios.put("/api/data/trait", {
       url: "new",
